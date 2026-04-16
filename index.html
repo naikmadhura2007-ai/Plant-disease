@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Agri AI Assistant — Offline AI-powered agriculture helper for farmers. Detect plant diseases, get crop suggestions, and access farming knowledge.">
+    <meta name="theme-color" content="#1B5E20">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Agri AI Assistant — Smart Farming Made Simple</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ===== STATUS BAR ===== -->
+    <div class="status-bar">
+        <span class="status-offline" id="statusBadge">
+            <span class="status-dot"></span>
+            Offline Ready
+        </span>
+        <span class="status-time" id="statusTime"></span>
+    </div>
+
+    <!-- ===== SCREEN: HOME ===== -->
+    <div class="screen active" id="screenHome">
+        <div class="home-hero">
+            <div class="logo-container">
+                <div class="logo-icon">🌱</div>
+                <h1 class="app-title">Agri AI</h1>
+                <p class="app-subtitle">Smart Farming Assistant</p>
+            </div>
+        </div>
+
+        <div class="home-actions">
+            <button class="action-card action-disease" id="btnDetectDisease" onclick="navigateTo('screenDiseaseDetect')">
+                <div class="action-icon">📸</div>
+                <div class="action-label">Detect Disease</div>
+                <div class="action-desc">Scan your crop</div>
+            </button>
+
+            <button class="action-card action-crop" id="btnSuggestCrop" onclick="navigateTo('screenCropForm')">
+                <div class="action-icon">🌾</div>
+                <div class="action-label">Suggest Crop</div>
+                <div class="action-desc">Best crop for you</div>
+            </button>
+
+            <button class="action-card action-info" id="btnOfflineInfo" onclick="navigateTo('screenOfflineInfo')">
+                <div class="action-icon">📚</div>
+                <div class="action-label">Farm Guide</div>
+                <div class="action-desc">Offline knowledge</div>
+            </button>
+
+            <button class="action-card action-voice" id="btnVoice" onclick="startVoiceInput()">
+                <div class="action-icon">🎤</div>
+                <div class="action-label">Voice Input</div>
+                <div class="action-desc">Ask anything</div>
+            </button>
+        </div>
+
+        <div class="home-tip">
+            <div class="tip-icon">💡</div>
+            <div class="tip-text">
+                <strong>Today's Tip:</strong>
+                <span id="dailyTip">Water your crops early morning for best absorption.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SCREEN: DISEASE DETECTION ===== -->
+    <div class="screen" id="screenDiseaseDetect">
+        <header class="screen-header">
+            <button class="btn-back" onclick="navigateTo('screenHome')" aria-label="Go back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2 class="screen-title">📸 Detect Disease</h2>
+            <div class="header-spacer"></div>
+        </header>
+
+        <div class="detect-body">
+            <!-- Camera Preview / Upload Area -->
+            <div class="camera-area" id="cameraArea">
+                <div class="camera-placeholder" id="cameraPlaceholder">
+                    <div class="camera-icon-large">📷</div>
+                    <p>Take a photo of the affected leaf or crop</p>
+                </div>
+                <video id="cameraPreview" class="camera-video" autoplay playsinline></video>
+                <img id="imagePreview" class="image-preview" alt="Captured crop image">
+                <canvas id="cameraCanvas" style="display:none;"></canvas>
+            </div>
+
+            <!-- Camera Controls -->
+            <div class="camera-controls" id="cameraControls">
+                <button class="btn-camera-action btn-upload" id="btnUpload" onclick="triggerUpload()">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload</span>
+                </button>
+                <button class="btn-capture" id="btnCapture" onclick="capturePhoto()">
+                    <div class="capture-ring"></div>
+                </button>
+                <button class="btn-camera-action btn-switch" id="btnSwitchCam" onclick="switchCamera()">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                    <span>Flip</span>
+                </button>
+            </div>
+
+            <!-- Analyze Controls (shown after capture) -->
+            <div class="analyze-controls hidden" id="analyzeControls">
+                <button class="btn-large btn-secondary" onclick="retakePhoto()">
+                    🔄 Retake
+                </button>
+                <button class="btn-large btn-primary" id="btnAnalyze" onclick="analyzeImage()">
+                    🔍 Analyze Now
+                </button>
+            </div>
+
+            <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(event)">
+        </div>
+    </div>
+
+    <!-- ===== SCREEN: CROP RECOMMENDATION FORM ===== -->
+    <div class="screen" id="screenCropForm">
+        <header class="screen-header">
+            <button class="btn-back" onclick="navigateTo('screenHome')" aria-label="Go back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2 class="screen-title">🌾 Suggest Crop</h2>
+            <div class="header-spacer"></div>
+        </header>
+
+        <div class="form-body">
+            <div class="form-group">
+                <label class="form-label" for="soilType">
+                    <span class="label-icon">🏔️</span> Soil Type
+                </label>
+                <select class="form-select" id="soilType">
+                    <option value="">— Select Soil —</option>
+                    <option value="alluvial">Alluvial Soil</option>
+                    <option value="black">Black Soil (Regur)</option>
+                    <option value="red">Red Soil</option>
+                    <option value="laterite">Laterite Soil</option>
+                    <option value="sandy">Sandy Soil</option>
+                    <option value="clay">Clay Soil</option>
+                    <option value="loamy">Loamy Soil</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="temperature">
+                    <span class="label-icon">🌡️</span> Temperature: <strong id="tempValue">25°C</strong>
+                </label>
+                <input type="range" class="form-slider" id="temperature" min="5" max="50" value="25" oninput="updateTempDisplay(this.value)">
+                <div class="slider-range">
+                    <span>5°C</span><span>50°C</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="rainfall">
+                    <span class="label-icon">🌧️</span> Rainfall (mm/year)
+                </label>
+                <input type="number" class="form-input" id="rainfall" placeholder="e.g. 1200" min="0" max="5000" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="season">
+                    <span class="label-icon">📅</span> Season
+                </label>
+                <select class="form-select" id="season">
+                    <option value="">— Select Season —</option>
+                    <option value="kharif">Kharif (Monsoon — Jun to Oct)</option>
+                    <option value="rabi">Rabi (Winter — Oct to Mar)</option>
+                    <option value="zaid">Zaid (Summer — Mar to Jun)</option>
+                </select>
+            </div>
+
+            <button class="btn-large btn-primary btn-full" id="btnGetSuggestion" onclick="getCropSuggestion()">
+                🌾 Get Suggestion
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== SCREEN: RESULT ===== -->
+    <div class="screen" id="screenResult">
+        <header class="screen-header">
+            <button class="btn-back" id="btnResultBack" onclick="goBackFromResult()" aria-label="Go back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2 class="screen-title" id="resultTitle">🤖 AI Result</h2>
+            <div class="header-spacer"></div>
+        </header>
+
+        <div class="result-body" id="resultBody">
+            <!-- Dynamically filled -->
+        </div>
+    </div>
+
+    <!-- ===== SCREEN: OFFLINE INFO ===== -->
+    <div class="screen" id="screenOfflineInfo">
+        <header class="screen-header">
+            <button class="btn-back" onclick="navigateTo('screenHome')" aria-label="Go back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2 class="screen-title">📚 Farm Guide</h2>
+            <div class="header-spacer"></div>
+        </header>
+
+        <div class="info-body">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search crops or diseases..." oninput="filterInfoCards(this.value)">
+                <button class="search-clear hidden" id="searchClear" onclick="clearSearch()">✕</button>
+            </div>
+
+            <div class="info-tabs">
+                <button class="tab-btn active" id="tabCrops" onclick="switchTab('crops')">🌾 Crops</button>
+                <button class="tab-btn" id="tabDiseases" onclick="switchTab('diseases')">🦠 Diseases</button>
+            </div>
+
+            <div class="info-cards" id="infoCards">
+                <!-- Dynamically filled -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text" id="loadingText">Analyzing...</p>
+        </div>
+    </div>
+
+    <!-- ===== VOICE MODAL ===== -->
+    <div class="modal-overlay hidden" id="voiceModal">
+        <div class="modal-card">
+            <div class="voice-animation" id="voiceAnimation">
+                <div class="voice-ring"></div>
+                <div class="voice-ring"></div>
+                <div class="voice-ring"></div>
+                <div class="voice-mic">🎤</div>
+            </div>
+            <p class="voice-status" id="voiceStatus">Listening...</p>
+            <p class="voice-text" id="voiceText"></p>
+            <button class="btn-large btn-secondary" onclick="stopVoice()">Stop</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
