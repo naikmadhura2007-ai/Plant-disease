@@ -4,23 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Agri AI Assistant — Offline AI-powered agriculture helper for farmers. Detect plant diseases, get crop suggestions, and access farming knowledge.">
-    <meta name="theme-color" content="#1B5E20">
+    <meta name="theme-color" content="#1a4d2e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Agri AI Assistant — Smart Farming Made Simple</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- ===== ANIMATED BACKGROUND ORBS ===== -->
+    <div class="ag-bg">
+        <div class="ag-orb ag-orb-1"></div>
+        <div class="ag-orb ag-orb-2"></div>
+        <div class="ag-orb ag-orb-3"></div>
+    </div>
+
     <!-- ===== STATUS BAR ===== -->
     <div class="status-bar">
         <span class="status-offline" id="statusBadge">
             <span class="status-dot"></span>
-            Offline Ready
+            <span data-i18n="offlineStatus">Offline AI Active</span>
         </span>
         <span class="status-time" id="statusTime"></span>
+    </div>
+
+    <!-- ===== LANGUAGE SWITCHER ===== -->
+    <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-pill" id="langPill" onclick="toggleLangMenu()">
+            <span class="lang-flag" id="langFlag">🌐</span>
+            <span class="lang-name" id="langName">EN</span>
+            <span class="lang-chevron" id="langChevron">▼</span>
+        </button>
+        <div class="lang-menu" id="langMenu">
+            <button onclick="setLanguage('en')" data-lang="en" class="active">🌐 English</button>
+            <button onclick="setLanguage('hi')" data-lang="hi">🇮🇳 हिन्दी</button>
+            <button onclick="setLanguage('kn')" data-lang="kn">🇮🇳 ಕನ್ನಡ</button>
+            <button onclick="setLanguage('te')" data-lang="te">🇮🇳 తెలుగు</button>
+            <button onclick="setLanguage('ta')" data-lang="ta">🇮🇳 தமிழ்</button>
+        </div>
     </div>
 
     <!-- ===== SCREEN: HOME ===== -->
@@ -28,42 +51,42 @@
         <div class="home-hero">
             <div class="logo-container">
                 <div class="logo-icon">🌱</div>
-                <h1 class="app-title">Agri AI</h1>
-                <p class="app-subtitle">Smart Farming Assistant</p>
+                <h1 class="app-title" data-i18n="appTitle">Agri AI</h1>
+                <p class="app-subtitle" data-i18n="appSubtitle">Smart Farming Assistant</p>
             </div>
         </div>
 
         <div class="home-actions">
-            <button class="action-card action-disease" id="btnDetectDisease" onclick="navigateTo('screenDiseaseDetect')">
+            <button class="action-card action-disease stagger-1" id="btnDetectDisease" onclick="navigateTo('screenDiseaseDetect')">
                 <div class="action-icon">📸</div>
-                <div class="action-label">Detect Disease</div>
-                <div class="action-desc">Scan your crop</div>
+                <div class="action-label" data-i18n="detectDisease">Detect Disease</div>
+                <div class="action-desc" data-i18n="detectDiseaseDesc">Scan your crop</div>
             </button>
 
-            <button class="action-card action-crop" id="btnSuggestCrop" onclick="navigateTo('screenCropForm')">
+            <button class="action-card action-crop stagger-2" id="btnSuggestCrop" onclick="navigateTo('screenCropForm')">
                 <div class="action-icon">🌾</div>
-                <div class="action-label">Suggest Crop</div>
-                <div class="action-desc">Best crop for you</div>
+                <div class="action-label" data-i18n="suggestCrop">Suggest Crop</div>
+                <div class="action-desc" data-i18n="suggestCropDesc">Best crop for you</div>
             </button>
 
-            <button class="action-card action-info" id="btnOfflineInfo" onclick="navigateTo('screenOfflineInfo')">
+            <button class="action-card action-info stagger-3" id="btnOfflineInfo" onclick="navigateTo('screenOfflineInfo')">
                 <div class="action-icon">📚</div>
-                <div class="action-label">Farm Guide</div>
-                <div class="action-desc">Offline knowledge</div>
+                <div class="action-label" data-i18n="farmGuide">Farm Guide</div>
+                <div class="action-desc" data-i18n="farmGuideDesc">Offline knowledge</div>
             </button>
 
-            <button class="action-card action-voice" id="btnVoice" onclick="startVoiceInput()">
+            <button class="action-card action-voice stagger-4" id="btnVoice" onclick="startVoiceInput()">
                 <div class="action-icon">🎤</div>
-                <div class="action-label">Voice Input</div>
-                <div class="action-desc">Ask anything</div>
+                <div class="action-label" data-i18n="voiceInput">Voice Input</div>
+                <div class="action-desc" data-i18n="voiceInputDesc">Ask anything</div>
             </button>
         </div>
 
         <div class="home-tip">
             <div class="tip-icon">💡</div>
             <div class="tip-text">
-                <strong>Today's Tip:</strong>
-                <span id="dailyTip">Water your crops early morning for best absorption.</span>
+                <strong data-i18n="todaysTip">Today's Tip:</strong>
+                <span id="dailyTip" data-i18n="tipDefault">Water your crops early morning for best absorption.</span>
             </div>
         </div>
     </div>
@@ -74,44 +97,41 @@
             <button class="btn-back" onclick="navigateTo('screenHome')" aria-label="Go back">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <h2 class="screen-title">📸 Detect Disease</h2>
+            <h2 class="screen-title" data-i18n="detectDiseaseTitle">📸 Detect Disease</h2>
             <div class="header-spacer"></div>
         </header>
 
         <div class="detect-body">
-            <!-- Camera Preview / Upload Area -->
             <div class="camera-area" id="cameraArea">
                 <div class="camera-placeholder" id="cameraPlaceholder">
                     <div class="camera-icon-large">📷</div>
-                    <p>Take a photo of the affected leaf or crop</p>
+                    <p data-i18n="cameraPrompt">Take a photo of the affected leaf or crop</p>
                 </div>
                 <video id="cameraPreview" class="camera-video" autoplay playsinline></video>
                 <img id="imagePreview" class="image-preview" alt="Captured crop image">
                 <canvas id="cameraCanvas" style="display:none;"></canvas>
             </div>
 
-            <!-- Camera Controls -->
             <div class="camera-controls" id="cameraControls">
                 <button class="btn-camera-action btn-upload" id="btnUpload" onclick="triggerUpload()">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>Upload</span>
+                    <span data-i18n="upload">Upload</span>
                 </button>
                 <button class="btn-capture" id="btnCapture" onclick="capturePhoto()">
                     <div class="capture-ring"></div>
                 </button>
                 <button class="btn-camera-action btn-switch" id="btnSwitchCam" onclick="switchCamera()">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                    <span>Flip</span>
+                    <span data-i18n="flip">Flip</span>
                 </button>
             </div>
 
-            <!-- Analyze Controls (shown after capture) -->
             <div class="analyze-controls hidden" id="analyzeControls">
                 <button class="btn-large btn-secondary" onclick="retakePhoto()">
-                    🔄 Retake
+                    🔄 <span data-i18n="retake">Retake</span>
                 </button>
                 <button class="btn-large btn-primary" id="btnAnalyze" onclick="analyzeImage()">
-                    🔍 Analyze Now
+                    🔍 <span data-i18n="analyzeNow">Analyze Now</span>
                 </button>
             </div>
 
@@ -125,58 +145,56 @@
             <button class="btn-back" onclick="navigateTo('screenHome')" aria-label="Go back">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <h2 class="screen-title">🌾 Suggest Crop</h2>
+            <h2 class="screen-title" data-i18n="suggestCropTitle">🌾 Suggest Crop</h2>
             <div class="header-spacer"></div>
         </header>
 
         <div class="form-body">
             <div class="form-group">
                 <label class="form-label" for="soilType">
-                    <span class="label-icon">🏔️</span> Soil Type
+                    <span class="label-icon">🏔️</span> <span data-i18n="soilType">Soil Type</span>
                 </label>
                 <select class="form-select" id="soilType">
-                    <option value="">— Select Soil —</option>
-                    <option value="alluvial">Alluvial Soil</option>
-                    <option value="black">Black Soil (Regur)</option>
-                    <option value="red">Red Soil</option>
-                    <option value="laterite">Laterite Soil</option>
-                    <option value="sandy">Sandy Soil</option>
-                    <option value="clay">Clay Soil</option>
-                    <option value="loamy">Loamy Soil</option>
+                    <option value="" data-i18n="selectSoil">— Select Soil —</option>
+                    <option value="alluvial" data-i18n="alluvial">Alluvial Soil</option>
+                    <option value="black" data-i18n="blackSoil">Black Soil (Regur)</option>
+                    <option value="red" data-i18n="redSoil">Red Soil</option>
+                    <option value="laterite" data-i18n="laterite">Laterite Soil</option>
+                    <option value="sandy" data-i18n="sandySoil">Sandy Soil</option>
+                    <option value="clay" data-i18n="claySoil">Clay Soil</option>
+                    <option value="loamy" data-i18n="loamySoil">Loamy Soil</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="temperature">
-                    <span class="label-icon">🌡️</span> Temperature: <strong id="tempValue">25°C</strong>
+                    <span class="label-icon">🌡️</span> <span data-i18n="temperature">Temperature</span>: <strong id="tempValue">25°C</strong>
                 </label>
                 <input type="range" class="form-slider" id="temperature" min="5" max="50" value="25" oninput="updateTempDisplay(this.value)">
-                <div class="slider-range">
-                    <span>5°C</span><span>50°C</span>
-                </div>
+                <div class="slider-range"><span>5°C</span><span>50°C</span></div>
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="rainfall">
-                    <span class="label-icon">🌧️</span> Rainfall (mm/year)
+                    <span class="label-icon">🌧️</span> <span data-i18n="rainfall">Rainfall (mm/year)</span>
                 </label>
                 <input type="number" class="form-input" id="rainfall" placeholder="e.g. 1200" min="0" max="5000" inputmode="numeric">
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="season">
-                    <span class="label-icon">📅</span> Season
+                    <span class="label-icon">📅</span> <span data-i18n="season">Season</span>
                 </label>
                 <select class="form-select" id="season">
-                    <option value="">— Select Season —</option>
-                    <option value="kharif">Kharif (Monsoon — Jun to Oct)</option>
-                    <option value="rabi">Rabi (Winter — Oct to Mar)</option>
-                    <option value="zaid">Zaid (Summer — Mar to Jun)</option>
+                    <option value="" data-i18n="selectSeason">— Select Season —</option>
+                    <option value="kharif" data-i18n="kharif">Kharif (Monsoon — Jun to Oct)</option>
+                    <option value="rabi" data-i18n="rabi">Rabi (Winter — Oct to Mar)</option>
+                    <option value="zaid" data-i18n="zaid">Zaid (Summer — Mar to Jun)</option>
                 </select>
             </div>
 
             <button class="btn-large btn-primary btn-full" id="btnGetSuggestion" onclick="getCropSuggestion()">
-                🌾 Get Suggestion
+                🌾 <span data-i18n="getSuggestion">Get Suggestion</span>
             </button>
         </div>
     </div>
@@ -202,20 +220,20 @@
             <button class="btn-back" onclick="navigateTo('screenHome')" aria-label="Go back">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <h2 class="screen-title">📚 Farm Guide</h2>
+            <h2 class="screen-title" data-i18n="farmGuideTitle">📚 Farm Guide</h2>
             <div class="header-spacer"></div>
         </header>
 
         <div class="info-body">
             <div class="search-container">
                 <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="searchInput" placeholder="Search crops or diseases..." oninput="filterInfoCards(this.value)">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search crops or diseases..." data-i18n-placeholder="searchPlaceholder" oninput="filterInfoCards(this.value)">
                 <button class="search-clear hidden" id="searchClear" onclick="clearSearch()">✕</button>
             </div>
 
             <div class="info-tabs">
-                <button class="tab-btn active" id="tabCrops" onclick="switchTab('crops')">🌾 Crops</button>
-                <button class="tab-btn" id="tabDiseases" onclick="switchTab('diseases')">🦠 Diseases</button>
+                <button class="tab-btn active" id="tabCrops" onclick="switchTab('crops')">🌾 <span data-i18n="crops">Crops</span></button>
+                <button class="tab-btn" id="tabDiseases" onclick="switchTab('diseases')">🦠 <span data-i18n="diseases">Diseases</span></button>
             </div>
 
             <div class="info-cards" id="infoCards">
@@ -241,9 +259,9 @@
                 <div class="voice-ring"></div>
                 <div class="voice-mic">🎤</div>
             </div>
-            <p class="voice-status" id="voiceStatus">Listening...</p>
+            <p class="voice-status" id="voiceStatus" data-i18n="listening">Listening...</p>
             <p class="voice-text" id="voiceText"></p>
-            <button class="btn-large btn-secondary" onclick="stopVoice()">Stop</button>
+            <button class="btn-large btn-secondary" onclick="stopVoice()" data-i18n="stop">Stop</button>
         </div>
     </div>
 
